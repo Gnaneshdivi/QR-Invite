@@ -22,6 +22,23 @@ const generateRoomCode = () => {
   return Math.floor(100 + Math.random() * 900).toString(); // 3-digit code
 };
 
+const showNextUser = async (queue, setQueue, setCurrentUser, roomId) => {
+  if (queue.length > 0) {
+    setCurrentUser(queue[0]);
+    setTimeout(async () => {
+      setQueue((prevQueue) => prevQueue.slice(1));
+      setCurrentUser("");
+      const queueRef = ref(db, `rooms/${roomId}/queue`);
+      const snapshot = await get(queueRef);
+      if (snapshot.exists()) {
+        const users = Object.entries(snapshot.val());
+        await remove(ref(db, `rooms/${roomId}/queue/${users[0][0]}`));
+        console.log("User removed from Firebase queue:", users[0][1].name);
+      }
+    }, 3000);
+  }
+};
+
 const RoomScreen = ({ roomId, queue, currentUser, qrData }) => {
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
@@ -88,7 +105,7 @@ const App = () => {
 
   useEffect(() => {
     if (!currentUser && queue.length > 0) {
-      showNextUser();
+      showNextUser(queue, setQueue, setCurrentUser, roomId);
     }
   }, [queue]);
 
