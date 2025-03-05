@@ -23,6 +23,17 @@ const generateRoomCode = () => {
 };
 
 const RoomScreen = ({ roomId, queue, currentUser, qrData }) => {
+  const [displayText, setDisplayText] = useState("Welcome to the Event");
+
+  useEffect(() => {
+    if (currentUser) {
+      setDisplayText(`Welcome ${currentUser}!`);
+      setTimeout(() => {
+        setDisplayText("Welcome to the Event");
+      }, 5000);
+    }
+  }, [currentUser]);
+
   return (
     <div style={{ textAlign: "center", marginTop: "50px", position: "relative" }}>
       <img src={"/Cipla_logo.png"} alt="Cipla Logo" style={{ width: "200px", marginBottom: "20px" }} />
@@ -31,37 +42,37 @@ const RoomScreen = ({ roomId, queue, currentUser, qrData }) => {
         <p>Screen: {roomId}</p>
         <p>Scan to interact</p>
       </div>
-      <h1 style={{ fontSize: "48px", marginTop: "100px" }}>
-        {currentUser ? `Welcome ${currentUser}!` : "Waiting for participants..."}
-      </h1>
+      <h1 style={{ fontSize: "48px", marginTop: "100px" }}>{displayText}</h1>
     </div>
   );
 };
 
 const JoinScreen = ({ roomId, employeeId, setEmployeeId, handleJoin, joinStatus }) => {
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <nav style={{ display: "flex", justifyContent: "space-between", padding: "10px 20px", background: "#f5f5f5" }}>
-        <img src={"/tab_Logo.png"} alt="Rewardsy Logo" style={{ height: "50px" }} />
-        <img src={"/Cipla_logo.png"} alt="Cipla Logo" style={{ height: "50px" }} />
+    <div style={{ textAlign: "center", marginTop: "50px",  height: "100vh" }}>
+     <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "black", position: "fixed", width: "100%", top: 0, left: 0, zIndex: 100 }}>
+        <img src={"/tab_Logo.png"} alt="Rewardsy Logo" style={{ height: "40px", alignSelf: "flex-start",padding:"10px" }} />
+        <img src={"/Cipla_logo.png"} alt="Cipla Logo" style={{ height: "40px", alignSelf: "flex-end",padding:"10px" }} />
       </nav>
-      <h2 style={{ marginTop: "50px" }}>Enter Employee ID</h2>
-      <input
-        type="text"
-        value={employeeId}
-        onChange={(e) => setEmployeeId(e.target.value)}
-        placeholder="Employee ID"
-        style={{ padding: "10px", fontSize: "18px", width: "250px", textAlign: "center", marginBottom: "20px" }}
-      />
-      <br />
-      <button
-        onClick={handleJoin}
-        style={{ padding: "15px 30px", fontSize: "20px", background: "#007bff", color: "white", border: "none", borderRadius: "8px", cursor: "pointer" }}
-      >
-        Submit
-      </button>
-      {joinStatus === "success" && <p style={{ color: "green", fontSize: "24px", marginTop: "20px" }}>✅ Successfully joined!</p>}
-      {joinStatus === "failure" && <p style={{ color: "red", fontSize: "24px", marginTop: "20px" }}>❌ Failed to join. Invalid Employee ID.</p>}
+      <div style={{ marginTop: "100px" }}>
+        <h2>Enter Employee ID</h2>
+        <input
+          type="text"
+          value={employeeId}
+          onChange={(e) => setEmployeeId(e.target.value)}
+          placeholder="Employee ID"
+          style={{ padding: "10px", fontSize: "18px", width: "250px", textAlign: "center", marginBottom: "20px", background: "white", color: "black" }}
+        />
+        <br />
+        <button
+          onClick={handleJoin}
+          style={{ padding: "15px 30px", fontSize: "20px", background: "#007bff", color: "white", border: "none", borderRadius: "8px", cursor: "pointer" }}
+        >
+          Submit
+        </button>
+        {joinStatus === "success" && <p style={{ color: "green", fontSize: "24px", marginTop: "20px" }}>✅ Successfully joined!</p>}
+        {joinStatus === "failure" && <p style={{ color: "red", fontSize: "24px", marginTop: "20px" }}>❌ Failed to join. Invalid Employee ID.</p>}
+      </div>
     </div>
   );
 };
