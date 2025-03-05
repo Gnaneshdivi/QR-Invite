@@ -49,8 +49,10 @@ const App = () => {
   const handleJoin = async () => {
     if (employeeId.trim()) {
       const name = await fetchEmployeeName(employeeId);
+      console.log("Employee Name:", name);
       const roomRef = ref(db, `rooms/${roomId}`);
       const newUserRef = push(roomRef);
+      console.log("push done ");
       set(newUserRef, { name, timestamp: Date.now() });
       window.location.href = `${window.location.origin}?room=${roomId}`; // Redirect back to main screen
     }
