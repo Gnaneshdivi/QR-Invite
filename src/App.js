@@ -3,8 +3,6 @@ import { QRCodeCanvas } from "qrcode.react";
 import { db } from "./firebase";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { ref, set, push, onValue, remove, get } from "firebase/database";
-import ciplaLogo from "./Cipla_logo.png";
-import rewardsyLogo from "./tab_Logo.png";
 
 const firestore = getFirestore();
 
@@ -27,7 +25,7 @@ const generateRoomCode = () => {
 const RoomScreen = ({ roomId, queue, currentUser, qrData }) => {
   return (
     <div style={{ textAlign: "center", marginTop: "50px", position: "relative" }}>
-      <img src={ciplaLogo} alt="Cipla Logo" style={{ width: "200px", marginBottom: "20px" }} />
+      <img src={"/Cipla_logo.png"} alt="Cipla Logo" style={{ width: "200px", marginBottom: "20px" }} />
       <div style={{ position: "absolute", top: 10, right: 10, textAlign: "center" }}>
         <QRCodeCanvas value={qrData} size={128} />
         <p>Screen: {roomId}</p>
@@ -44,8 +42,8 @@ const JoinScreen = ({ roomId, employeeId, setEmployeeId, handleJoin, joinStatus 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <nav style={{ display: "flex", justifyContent: "space-between", padding: "10px 20px", background: "#f5f5f5" }}>
-        <img src={rewardsyLogo} alt="Rewardsy Logo" style={{ height: "50px" }} />
-        <img src={ciplaLogo} alt="Cipla Logo" style={{ height: "50px" }} />
+        <img src={"/tab_Logo.png"} alt="Rewardsy Logo" style={{ height: "50px" }} />
+        <img src={"/Cipla_logo.png"} alt="Cipla Logo" style={{ height: "50px" }} />
       </nav>
       <h2 style={{ marginTop: "50px" }}>Enter Employee ID</h2>
       <input
