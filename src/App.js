@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { db } from "./firebase";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { ref, set, push, onValue, remove, get } from "firebase/database";
+
+const firestore = getFirestore();
 
 const fetchEmployeeName = async (employeeId) => {
   const sheetURL = "https://script.google.com/macros/s/AKfycbz7HwfE1HSV6_FERG1ydNt8g_CFhJg2YoAAEkphcpKP2a3YdjxhD86lHAaPTk63vN90/exec"; // Replace with actual API endpoint
@@ -102,6 +105,13 @@ const App = () => {
         const newUserRef = push(roomRef);
         await set(newUserRef, { name, timestamp: Date.now() });
         console.log("User added to Firebase queue:", name);
+        await addDoc(collection(firestore, "scannedUsers"), {
+          roomId,
+          employeeId,
+          name,
+          timestamp: new Date()
+        });
+        console.log("User added to Firestore log:", name);
         setJoinStatus("success");
         setTimeout(() => setJoinStatus(null), 2000);
       } catch (error) {
@@ -110,32 +120,6 @@ const App = () => {
       }
     }
   };
-
-  const showNextUser = async () => {
-    if (queue.length > 0) {
-      setCurrentUser(queue[0]);
-      setTimeout(async () => {
-        setQueue((prevQueue) => prevQueue.slice(1));
-        setCurrentUser("");
-        const queueRef = ref(db, `rooms/${roomId}/queue`);
-        const snapshot = await get(queueRef);
-        if (snapshot.exists()) {
-          const users = Object.entries(snapshot.val());
-          await remove(ref(db, `rooms/${roomId}/queue/${users[0][0]}`));
-          console.log("User removed from Firebase queue:", users[0][1].name);
-        }
-      }, 3000);
-    }
-  };
-
-  useEffect(() => {
-    const cleanupRoom = async () => {
-      const roomRef = ref(db, `rooms/${roomId}`);
-      await remove(roomRef);
-      console.log("Room deleted from Firebase:", roomId);
-    };
-    return cleanupRoom;
-  }, [roomId]);
 
   return window.location.search.includes("room") ? (
     <JoinScreen
