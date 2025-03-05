@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { v4 as uuidv4 } from "uuid";
 
 const fetchEmployeeName = async (employeeId) => {
   const sheetURL = "https://script.google.com/macros/s/AKfycbz7HwfE1HSV6_FERG1ydNt8g_CFhJg2YoAAEkphcpKP2a3YdjxhD86lHAaPTk63vN90/exec"; // Replace with actual API endpoint
@@ -14,8 +13,12 @@ const fetchEmployeeName = async (employeeId) => {
   }
 };
 
+const generateRoomCode = () => {
+  return Math.floor(100 + Math.random() * 900).toString(); // 3-digit code
+};
+
 const App = () => {
-  const [roomId, setRoomId] = useState(uuidv4()); // Generate unique room ID
+  const [roomId, setRoomId] = useState(generateRoomCode()); // Generate 3-digit room ID
   const [currentUser, setCurrentUser] = useState("");
   const [employeeId, setEmployeeId] = useState("");
   const [queue, setQueue] = useState([]);
@@ -55,15 +58,16 @@ const App = () => {
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h1>Room ID: {roomId}</h1>
-      <div style={{ position: "absolute", top: 10, right: 10 }}>
-        <QRCodeCanvas value={qrData} size={128} />
-      </div>
-      <h2>{currentUser ? `Welcome ${currentUser}!` : "Waiting for participants..."}</h2>
-      {!window.location.search.includes("room") && (
-        <p>Scan the QR Code to join the room</p>
-      )}
-      {window.location.search.includes("room") && (
+      {!window.location.search.includes("room") ? (
+        <>
+          <h1>Room Code: {roomId}</h1>
+          <div style={{ position: "absolute", top: 10, right: 10 }}>
+            <QRCodeCanvas value={qrData} size={128} />
+          </div>
+          <h2>{currentUser ? `Welcome ${currentUser}!` : "Waiting for participants..."}</h2>
+          <p>Scan the QR Code to join the room</p>
+        </>
+      ) : (
         <div>
           <input
             type="text"
