@@ -100,10 +100,10 @@ const JoinScreen = ({ roomId }) => {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px", height: "100vh", background: "black", color: "white", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ textAlign: "center", marginTop: "50px", height: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "black", position: "fixed", width: "100%", top: 0, left: 0, padding: "15px 20px", zIndex: 100 }}>
-        <img src={"/tab_Logo.png"} alt="Rewardsy Logo" style={{ height: "40px" }} />
-        <img src={"/Cipla_logo.png"} alt="Cipla Logo" style={{ height: "40px" }} />
+        <img src={"/tab_Logo.png"} alt="Rewardsy Logo" style={{ height: "40px", padding: "10px" }} />
+        <img src={"/Cipla_logo.png"} alt="Cipla Logo" style={{ height: "40px", padding: "10px" }} />
       </nav>
       <h2>Enter Employee ID</h2>
       <input
