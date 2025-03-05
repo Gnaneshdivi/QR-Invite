@@ -33,7 +33,7 @@ const App = () => {
   useEffect(() => {
     if (!window.location.search.includes("room")) {
       console.log("Listening for updates in room:", roomId);
-      const roomRef = ref(db, `rooms/${roomId}`);
+      const roomRef = ref(db, `rooms/${roomId}/queue`);
       onValue(roomRef, (snapshot) => {
         if (snapshot.exists()) {
           const users = Object.values(snapshot.val());
@@ -62,14 +62,11 @@ const App = () => {
           return;
         }
 
-        const roomRef = ref(db, `rooms/${roomId}`);
+        const roomRef = ref(db, `rooms/${roomId}/queue`);
         const newUserRef = push(roomRef);
         await set(newUserRef, { name, timestamp: Date.now() });
         console.log("User added to Firebase:", name);
         setJoinStatus("success");
-        setTimeout(() => {
-          window.location.href = `${window.location.origin}?room=${roomId}`; // Redirect back to main screen
-        }, 1000);
       } catch (error) {
         console.error("Error joining room:", error);
         setJoinStatus("failure");
@@ -83,12 +80,12 @@ const App = () => {
       setTimeout(() => {
         setQueue((prevQueue) => prevQueue.slice(1));
         setCurrentUser("");
-        const roomRef = ref(db, `rooms/${roomId}`);
+        const roomRef = ref(db, `rooms/${roomId}/queue`);
         onValue(roomRef, (snapshot) => {
           if (snapshot.exists()) {
-            const users = Object.keys(snapshot.val());
-            remove(ref(db, `rooms/${roomId}/${users[0]}`)); // Remove first user after delay
-            console.log("User removed from Firebase:", users[0]);
+            const users = Object.entries(snapshot.val());
+            remove(ref(db, `rooms/${roomId}/queue/${users[0][0]}`)); // Remove first user correctly from queue
+            console.log("User removed from Firebase:", users[0][1].name);
           }
         });
       }, 3000);
@@ -115,8 +112,8 @@ const App = () => {
             placeholder="Enter your Employee ID"
           />
           <button onClick={handleJoin}>Join</button>
-          {joinStatus === "success" && <p style={{ color: "green" }}>Successfully joined!</p>}
-          {joinStatus === "failure" && <p style={{ color: "red" }}>Failed to join. Invalid Employee ID.</p>}
+          {joinStatus === "success" && <p style={{ color: "green" }}>✅ Successfully joined!</p>}
+          {joinStatus === "failure" && <p style={{ color: "red" }}>❌ Failed to join. Invalid Employee ID.</p>}
         </div>
       )}
     </div>
