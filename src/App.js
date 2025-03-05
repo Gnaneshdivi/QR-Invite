@@ -18,17 +18,20 @@ const generateRoomCode = () => {
 };
 
 const App = () => {
-  const [roomId, setRoomId] = useState(generateRoomCode()); // Generate 3-digit room ID
+  const [roomId, setRoomId] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("room") || generateRoomCode();
+  });
   const [currentUser, setCurrentUser] = useState("");
   const [employeeId, setEmployeeId] = useState("");
   const [queue, setQueue] = useState([]);
-  const qrData = `${window.location.origin}?room=${roomId}`; // Updated QR Data format
+  const qrData = `${window.location.origin}?room=${roomId}`;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const room = params.get("room");
-    if (room) {
-      setRoomId(room);
+    const name = params.get("name");
+    if (name) {
+      setQueue((prevQueue) => [...prevQueue, name]);
     }
   }, []);
 
@@ -36,23 +39,22 @@ const App = () => {
     if (!currentUser && queue.length > 0) {
       showNextUser();
     }
-  }, [queue]); // Automatically process queue when it updates
+  }, [queue]);
 
   const handleJoin = async () => {
     if (employeeId.trim()) {
       const name = await fetchEmployeeName(employeeId);
-      setQueue((prevQueue) => [...prevQueue, name]);
-      setEmployeeId("");
+      window.location.href = `${window.location.origin}?room=${roomId}&name=${encodeURIComponent(name)}`;
     }
   };
 
   const showNextUser = () => {
     if (queue.length > 0) {
-      setCurrentUser(queue[0]); // Show first user in queue
+      setCurrentUser(queue[0]);
       setTimeout(() => {
-        setQueue((prevQueue) => prevQueue.slice(1)); // Remove first user after delay
+        setQueue((prevQueue) => prevQueue.slice(1));
         setCurrentUser("");
-      }, 3000); // Show each user for 3 seconds
+      }, 3000);
     }
   };
 
