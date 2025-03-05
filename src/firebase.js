@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { getDatabase } from "firebase/database";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -9,7 +10,7 @@ const firebaseConfig = {
     messagingSenderId: "105669450098",
     appId: "1:105669450098:web:c8bad2f2bc9317d7fca5eb",
     measurementId: "G-4KX2QJLZ0Q",
-    databaseURL: "https://qr-app-154cf.firebaseio.com",
+    databaseURL: "https://qr-app-154cf.firebaseio.com/",
   };
 
   const app = initializeApp(firebaseConfig);
