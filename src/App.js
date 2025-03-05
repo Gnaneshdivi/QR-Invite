@@ -61,6 +61,63 @@ const RoomScreen = ({ roomId, queue, setQueue, qrData }) => {
   );
 };
 
+const JoinScreen = ({ roomId }) => {
+  const [employeeId, setEmployeeId] = useState("");
+  const [joinStatus, setJoinStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleJoin = async () => {
+    if (employeeId.trim()) {
+      setLoading(true);
+      try {
+        const name = await fetchEmployeeName(employeeId);
+        console.log("Employee Name Fetched:", name);
+        if (name === "Unknown") {
+          setJoinStatus("failure");
+          setLoading(false);
+          return;
+        }
+        const roomRef = ref(db, `rooms/${roomId}/queue`);
+        const newUserRef = push(roomRef);
+        await set(newUserRef, { name, timestamp: Date.now() });
+        console.log("User added to Firebase queue:", name);
+        await addDoc(collection(firestore, "scannedUsers"), {
+          roomId,
+          employeeId,
+          name,
+          timestamp: new Date()
+        });
+        console.log("User added to Firestore log:", name);
+        setJoinStatus("success");
+        setTimeout(() => setJoinStatus(null), 2000);
+      } catch (error) {
+        console.error("Error joining room:", error);
+        setJoinStatus("failure");
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h2>Enter Employee ID</h2>
+      <input
+        type="text"
+        value={employeeId}
+        onChange={(e) => setEmployeeId(e.target.value)}
+        placeholder="Employee ID"
+        disabled={loading}
+      />
+      <button onClick={handleJoin} disabled={loading}>
+        {loading ? "Submitting..." : "Submit"}
+      </button>
+      {joinStatus === "success" && <p style={{ color: "green" }}>✅ Successfully joined!</p>}
+      {joinStatus === "failure" && <p style={{ color: "red" }}>❌ Failed to join. Invalid Employee ID.</p>}
+    </div>
+  );
+};
+
 const App = () => {
   const [roomId, setRoomId] = useState(() => {
     const params = new URLSearchParams(window.location.search);
@@ -87,7 +144,9 @@ const App = () => {
     }
   }, [roomId]);
 
-  return (
+  return window.location.search.includes("room") ? (
+    <JoinScreen roomId={roomId} />
+  ) : (
     <RoomScreen roomId={roomId} queue={queue} setQueue={setQueue} qrData={qrData} />
   );
 };
