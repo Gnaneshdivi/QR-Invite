@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { db } from "./firebase";
-import { ref, set, push, onValue, remove } from "firebase/database";
+import { ref, set, push, onValue, remove, get } from "firebase/database";
 
 const fetchEmployeeName = async (employeeId) => {
   const sheetURL = "https://script.google.com/macros/s/AKfycbz7HwfE1HSV6_FERG1ydNt8g_CFhJg2YoAAEkphcpKP2a3YdjxhD86lHAaPTk63vN90/exec"; // Replace with actual API endpoint
@@ -27,14 +27,16 @@ const App = () => {
   const [currentUser, setCurrentUser] = useState("");
   const [employeeId, setEmployeeId] = useState("");
   const [queue, setQueue] = useState([]);
-  const [joinStatus, setJoinStatus] = useState(null); // Success/Failure status
+  const [joinStatus, setJoinStatus] = useState(null);
   const qrData = `${window.location.origin}?room=${roomId}`;
 
   useEffect(() => {
     if (!window.location.search.includes("room")) {
-      console.log("Listening for updates in room:", roomId);
-      const roomRef = ref(db, `rooms/${roomId}/queue`);
-      onValue(roomRef, (snapshot) => {
+      console.log("Creating and listening for room:", roomId);
+      const roomRef = ref(db, `rooms/${roomId}`);
+      set(roomRef, { active: true, queue: {} }); // Ensure room is created
+      const queueRef = ref(db, `rooms/${roomId}/queue`);
+      onValue(queueRef, (snapshot) => {
         if (snapshot.exists()) {
           const users = Object.values(snapshot.val());
           setQueue(users.map((entry) => entry.name));
@@ -61,11 +63,10 @@ const App = () => {
           setJoinStatus("failure");
           return;
         }
-
         const roomRef = ref(db, `rooms/${roomId}/queue`);
         const newUserRef = push(roomRef);
         await set(newUserRef, { name, timestamp: Date.now() });
-        console.log("User added to Firebase:", name);
+        console.log("User added to Firebase queue:", name);
         setJoinStatus("success");
       } catch (error) {
         console.error("Error joining room:", error);
@@ -74,23 +75,31 @@ const App = () => {
     }
   };
 
-  const showNextUser = () => {
+  const showNextUser = async () => {
     if (queue.length > 0) {
       setCurrentUser(queue[0]);
-      setTimeout(() => {
+      setTimeout(async () => {
         setQueue((prevQueue) => prevQueue.slice(1));
         setCurrentUser("");
-        const roomRef = ref(db, `rooms/${roomId}/queue`);
-        onValue(roomRef, (snapshot) => {
-          if (snapshot.exists()) {
-            const users = Object.entries(snapshot.val());
-            remove(ref(db, `rooms/${roomId}/queue/${users[0][0]}`)); // Remove first user correctly from queue
-            console.log("User removed from Firebase:", users[0][1].name);
-          }
-        });
+        const queueRef = ref(db, `rooms/${roomId}/queue`);
+        const snapshot = await get(queueRef);
+        if (snapshot.exists()) {
+          const users = Object.entries(snapshot.val());
+          await remove(ref(db, `rooms/${roomId}/queue/${users[0][0]}`));
+          console.log("User removed from Firebase queue:", users[0][1].name);
+        }
       }, 3000);
     }
   };
+
+  useEffect(() => {
+    const cleanupRoom = async () => {
+      const roomRef = ref(db, `rooms/${roomId}`);
+      await remove(roomRef);
+      console.log("Room deleted from Firebase:", roomId);
+    };
+    return cleanupRoom;
+  }, [roomId]);
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
