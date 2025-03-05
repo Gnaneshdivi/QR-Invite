@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
+import { db } from "./firebase";
+import { ref, set, push, onValue, remove } from "firebase/database";
 
 const fetchEmployeeName = async (employeeId) => {
   const sheetURL = "https://script.google.com/macros/s/AKfycbz7HwfE1HSV6_FERG1ydNt8g_CFhJg2YoAAEkphcpKP2a3YdjxhD86lHAaPTk63vN90/exec"; // Replace with actual API endpoint
@@ -28,12 +30,15 @@ const App = () => {
   const qrData = `${window.location.origin}?room=${roomId}`;
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const name = params.get("name");
-    if (name) {
-      setQueue((prevQueue) => [...prevQueue, name]);
+    if (!window.location.search.includes("room")) {
+      // Listen for updates in Realtime Database
+      const roomRef = ref(db, `rooms/${roomId}`);
+      onValue(roomRef, (snapshot) => {
+        const users = snapshot.val() ? Object.values(snapshot.val()) : [];
+        setQueue(users.map((entry) => entry.name));
+      });
     }
-  }, []);
+  }, [roomId]);
 
   useEffect(() => {
     if (!currentUser && queue.length > 0) {
@@ -44,7 +49,10 @@ const App = () => {
   const handleJoin = async () => {
     if (employeeId.trim()) {
       const name = await fetchEmployeeName(employeeId);
-      window.location.href = `${window.location.origin}?room=${roomId}&name=${encodeURIComponent(name)}`;
+      const roomRef = ref(db, `rooms/${roomId}`);
+      const newUserRef = push(roomRef);
+      set(newUserRef, { name, timestamp: Date.now() });
+      window.location.href = `${window.location.origin}?room=${roomId}`; // Redirect back to main screen
     }
   };
 
@@ -54,6 +62,13 @@ const App = () => {
       setTimeout(() => {
         setQueue((prevQueue) => prevQueue.slice(1));
         setCurrentUser("");
+        const roomRef = ref(db, `rooms/${roomId}`);
+        onValue(roomRef, (snapshot) => {
+          if (snapshot.exists()) {
+            const users = Object.keys(snapshot.val());
+            remove(ref(db, `rooms/${roomId}/${users[0]}`)); // Remove first user after delay
+          }
+        });
       }, 3000);
     }
   };
