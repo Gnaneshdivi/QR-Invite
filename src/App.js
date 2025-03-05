@@ -101,7 +101,7 @@ const JoinScreen = ({ roomId }) => {
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px", height: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "black", position: "fixed", width: "100%", top: 0, left: 0, padding: "15px 20px", zIndex: 100 }}>
+      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "black", position: "fixed", width: "100%", top: 0, left: 0   , zIndex: 100 }}>
         <img src={"/tab_Logo.png"} alt="Rewardsy Logo" style={{ height: "40px", padding: "10px" }} />
         <img src={"/Cipla_logo.png"} alt="Cipla Logo" style={{ height: "40px", padding: "10px" }} />
       </nav>
@@ -112,7 +112,7 @@ const JoinScreen = ({ roomId }) => {
         onChange={(e) => setEmployeeId(e.target.value)}
         placeholder="Employee ID"
         disabled={loading}
-        style={{ padding: "10px", fontSize: "18px", width: "250px", textAlign: "center", marginBottom: "20px", background: "white", color: "black", borderRadius: "8px", border: "none" }}
+        style={{ padding: "10px", fontSize: "18px", width: "250px", textAlign: "center", marginBottom: "20px", background: "white", color: "black", borderRadius: "8px", border: "2px solid black" }}
       />
       <button onClick={handleJoin} disabled={loading} style={{ padding: "15px 30px", fontSize: "20px", background: "#007bff", color: "white", border: "none", borderRadius: "8px", cursor: "pointer" }}>
         {loading ? "Submitting..." : "Submit"}
