@@ -19,6 +19,41 @@ const generateRoomCode = () => {
   return Math.floor(100 + Math.random() * 900).toString(); // 3-digit code
 };
 
+const RoomScreen = ({ roomId, queue, currentUser, qrData }) => {
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>Room Code: {roomId}</h1>
+      <div style={{ position: "absolute", top: 10, right: 10 }}>
+        <QRCodeCanvas value={qrData} size={128} />
+      </div>
+      <h2>{currentUser ? `Welcome ${currentUser}!` : "Waiting for participants..."}</h2>
+      <p>Scan the QR Code to join the room</p>
+    </div>
+  );
+};
+
+const JoinScreen = ({ roomId, employeeId, setEmployeeId, handleJoin, joinStatus }) => {
+  return (
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      {joinStatus === "success" ? (
+        <p style={{ color: "green", fontSize: "24px" }}>✅ Successfully joined!</p>
+      ) : joinStatus === "failure" ? (
+        <p style={{ color: "red", fontSize: "24px" }}>❌ Failed to join. Invalid Employee ID.</p>
+      ) : (
+        <>
+          <input
+            type="text"
+            value={employeeId}
+            onChange={(e) => setEmployeeId(e.target.value)}
+            placeholder="Enter your Employee ID"
+          />
+          <button onClick={handleJoin}>Join</button>
+        </>
+      )}
+    </div>
+  );
+};
+
 const App = () => {
   const [roomId, setRoomId] = useState(() => {
     const params = new URLSearchParams(window.location.search);
@@ -68,6 +103,7 @@ const App = () => {
         await set(newUserRef, { name, timestamp: Date.now() });
         console.log("User added to Firebase queue:", name);
         setJoinStatus("success");
+        setTimeout(() => setJoinStatus(null), 2000);
       } catch (error) {
         console.error("Error joining room:", error);
         setJoinStatus("failure");
@@ -101,31 +137,16 @@ const App = () => {
     return cleanupRoom;
   }, [roomId]);
 
-  return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      {!window.location.search.includes("room") ? (
-        <>
-          <h1>Room Code: {roomId}</h1>
-          <div style={{ position: "absolute", top: 10, right: 10 }}>
-            <QRCodeCanvas value={qrData} size={128} />
-          </div>
-          <h2>{currentUser ? `Welcome ${currentUser}!` : "Waiting for participants..."}</h2>
-          <p>Scan the QR Code to join the room</p>
-        </>
-      ) : (
-        <div>
-          <input
-            type="text"
-            value={employeeId}
-            onChange={(e) => setEmployeeId(e.target.value)}
-            placeholder="Enter your Employee ID"
-          />
-          <button onClick={handleJoin}>Join</button>
-          {joinStatus === "success" && <p style={{ color: "green" }}>✅ Successfully joined!</p>}
-          {joinStatus === "failure" && <p style={{ color: "red" }}>❌ Failed to join. Invalid Employee ID.</p>}
-        </div>
-      )}
-    </div>
+  return window.location.search.includes("room") ? (
+    <JoinScreen
+      roomId={roomId}
+      employeeId={employeeId}
+      setEmployeeId={setEmployeeId}
+      handleJoin={handleJoin}
+      joinStatus={joinStatus}
+    />
+  ) : (
+    <RoomScreen roomId={roomId} queue={queue} currentUser={currentUser} qrData={qrData} />
   );
 };
 
