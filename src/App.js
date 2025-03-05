@@ -3,8 +3,8 @@ import { QRCodeCanvas } from "qrcode.react";
 import { db } from "./firebase";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { ref, set, push, onValue, remove, get } from "firebase/database";
-import ciplaLogo from "./assets/cipla-logo.png";
-import rewardsyLogo from "./assets/rewardsy-logo.png";
+import ciplaLogo from "./Cipla_logo.png";
+import rewardsyLogo from "./tab_Logo.png";
 
 const firestore = getFirestore();
 
