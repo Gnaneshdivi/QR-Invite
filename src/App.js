@@ -59,14 +59,16 @@ const RoomScreen = ({ roomId, queue, setQueue, qrData }) => {
       </div>
       <div className="logo-event-container">
         <img
-          src="/Cipla_event_logo.jpeg"
+          src="/cipla_event_logo.jpeg"
           alt="Cipla Logo"
           className="cipla-event-logo"
         />
       </div>
       <div className="content">
         <div className="qr-container">
+          <div className="qr">
           <QRCodeCanvas value={qrData} size={128} />
+          </div>
           <p className="room-id">Screen: {roomId}</p>
           <p className="scan-text">Scan to engage</p>
           <div className="rewardsy-section">

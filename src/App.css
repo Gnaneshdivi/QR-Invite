@@ -22,6 +22,10 @@ body {
   width: 100%;
   position: relative;
   padding: 20px;
+  /* background-image: url("../public/cipla_background.jpg");
+  background-repeat: no-repeat;
+  background-position: center;  */
+/* background-size: cover;   */
 }
 
 
@@ -161,9 +165,28 @@ body {
 @media screen and (max-aspect-ratio: 1 / 2) {
   .room-screen {
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     padding-top: 20px;
+    background: linear-gradient(180deg, #B22222 , #E85C40,#B22222 , #E85C40 );
+
+
+  }
+
+  .logo-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 30px;
+    margin-top: 20px;
+    width: 100vw;
+    padding: 10px;
+  }
+
+  .logo-event-container{
+    background-color: white;
+    padding: 20px 20px 20px 0px;
+    border-radius: 10px;
+    margin-bottom: 2vh;
   }
 
   .logo-event-container img{
@@ -179,10 +202,6 @@ body {
     order: 2;
   }
 
-  .logo-container {
-    margin-bottom: 30px;
-    margin-top: 20px;
-  }
 
   .cipla-logo {
     width: 150px;
