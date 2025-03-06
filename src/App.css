@@ -21,7 +21,7 @@ body {
   height: 100vh;
   width: 100%;
   position: relative;
-  padding: 20px;
+  /* padding: 20px; */
   background: linear-gradient(180deg, #B22222 , #E85C40,#B22222 , #E85C40 );
   /* background-image: url("../public/cipla_background.jpg");
   background-repeat: no-repeat;
@@ -163,7 +163,7 @@ body {
 }
 
 /* Responsive styles for vertical screens (8/4 inch aspect ratio) */
-@media screen and (max-aspect-ratio: 1 / 2) {
+@media screen and (max-aspect-ratio: 1 / 1.5) {
   .room-screen {
     flex-direction: column;
     justify-content: flex-start;
@@ -191,7 +191,7 @@ body {
   }
 
   .logo-event-container img{
-    width: 80vw;
+    width: 300px;
   }
 
   .room-content {
