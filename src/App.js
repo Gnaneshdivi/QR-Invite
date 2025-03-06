@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { db } from "./firebase";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 import { ref, set, push, onValue, remove, get } from "firebase/database";
+import "./App.css";
 
 const firestore = getFirestore();
 
 const fetchEmployeeName = async (employeeId) => {
-  const sheetURL = "https://script.google.com/macros/s/AKfycbz7HwfE1HSV6_FERG1ydNt8g_CFhJg2YoAAEkphcpKP2a3YdjxhD86lHAaPTk63vN90/exec";
+  const sheetURL =
+    "https://script.google.com/macros/s/AKfycbz7HwfE1HSV6_FERG1ydNt8g_CFhJg2YoAAEkphcpKP2a3YdjxhD86lHAaPTk63vN90/exec";
   try {
     const response = await fetch(`${sheetURL}?employeeId=${employeeId}`);
     const data = await response.json();
@@ -46,17 +50,40 @@ const RoomScreen = ({ roomId, queue, setQueue, qrData }) => {
         }
       }, 5000);
     }
-  }, [queue]);
+  }, [queue, roomId, setQueue]);
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px", position: "relative" }}>
-      <img src={"/Cipla_logo.png"} alt="Cipla Logo" style={{ width: "200px", marginBottom: "20px" }} />
-      <div style={{ position: "absolute", top: 10, right: 10, textAlign: "center" }}>
-        <QRCodeCanvas value={qrData} size={128} />
-        <p>Screen: {roomId}</p>
-        <p>Scan to interact</p>
+    <div className="room-screen">
+      <div className="logo-container">
+        <img src="/Cipla_logo.png" alt="Cipla Logo" className="cipla-logo" />
       </div>
-      <h1 style={{ fontSize: "48px", marginTop: "100px" }}>{displayText}</h1>
+      <div className="logo-event-container">
+        <img
+          src="/Cipla_event_logo.jpeg"
+          alt="Cipla Logo"
+          className="cipla-event-logo"
+        />
+      </div>
+      <div className="content">
+        <div className="qr-container">
+          <QRCodeCanvas value={qrData} size={128} />
+          <p className="room-id">Screen: {roomId}</p>
+          <p className="scan-text">Scan to engage</p>
+          <div className="rewardsy-section">
+            <p>powered by </p>
+            <img
+              src="/rewardsy_logo.png"
+              alt="Cipla Logo"
+              className="rewardsy-logo"
+            />
+          </div>
+        </div>
+        <div className="room-content">
+          <div className="welcome-message">
+            <h1>{displayText}</h1>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
@@ -85,7 +112,7 @@ const JoinScreen = ({ roomId }) => {
           roomId,
           employeeId,
           name,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
         console.log("User added to Firestore log:", name);
         setJoinStatus("success");
@@ -100,25 +127,37 @@ const JoinScreen = ({ roomId }) => {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px", height: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "black", position: "fixed", width: "100%", top: 0, left: 0   , zIndex: 100 }}>
-        <img src={"/tab_Logo.png"} alt="Rewardsy Logo" style={{ height: "40px", padding: "10px" }} />
-        <img src={"/Cipla_logo.png"} alt="Cipla Logo" style={{ height: "40px", padding: "10px" }} />
+    <div className="join-screen">
+      <nav className="join-nav">
+        <img src="/tab_Logo.png" alt="Rewardsy Logo" className="nav-logo" />
+        <img src="/Cipla_logo.png" alt="Cipla Logo" className="nav-logo" />
       </nav>
-      <h2>Enter Employee ID</h2>
-      <input
-        type="text"
-        value={employeeId}
-        onChange={(e) => setEmployeeId(e.target.value)}
-        placeholder="Employee ID"
-        disabled={loading}
-        style={{ padding: "10px", fontSize: "18px", width: "250px", textAlign: "center", marginBottom: "20px", background: "white", color: "black", borderRadius: "8px", border: "2px solid black" }}
-      />
-      <button onClick={handleJoin} disabled={loading} style={{ padding: "15px 30px", fontSize: "20px", background: "#007bff", color: "white", border: "none", borderRadius: "8px", cursor: "pointer" }}>
-        {loading ? "Submitting..." : "Submit"}
-      </button>
-      {joinStatus === "success" && <p style={{ color: "green", fontSize: "24px", marginTop: "20px" }}>✅ Successfully joined!</p>}
-      {joinStatus === "failure" && <p style={{ color: "red", fontSize: "24px", marginTop: "20px" }}>❌ Failed to join. Invalid Employee ID.</p>}
+      <div className="join-content">
+        <h2>Enter Employee ID</h2>
+        <input
+          type="text"
+          value={employeeId}
+          onChange={(e) => setEmployeeId(e.target.value)}
+          placeholder="Employee ID"
+          disabled={loading}
+          className="employee-input"
+        />
+        <button
+          onClick={handleJoin}
+          disabled={loading}
+          className="submit-button"
+        >
+          {loading ? "Submitting..." : "Submit"}
+        </button>
+        {joinStatus === "success" && (
+          <p className="status-success">✅ Successfully joined!</p>
+        )}
+        {joinStatus === "failure" && (
+          <p className="status-failure">
+            ❌ Failed to join. Invalid Employee ID.
+          </p>
+        )}
+      </div>
     </div>
   );
 };
@@ -141,7 +180,10 @@ const App = () => {
         if (snapshot.exists()) {
           const users = Object.values(snapshot.val());
           setQueue(users.map((entry) => entry.name));
-          console.log("Updated queue:", users.map((entry) => entry.name));
+          console.log(
+            "Updated queue:",
+            users.map((entry) => entry.name)
+          );
         } else {
           console.log("No users in room yet.");
         }
@@ -152,7 +194,12 @@ const App = () => {
   return window.location.search.includes("room") ? (
     <JoinScreen roomId={roomId} />
   ) : (
-    <RoomScreen roomId={roomId} queue={queue} setQueue={setQueue} qrData={qrData} />
+    <RoomScreen
+      roomId={roomId}
+      queue={queue}
+      setQueue={setQueue}
+      qrData={qrData}
+    />
   );
 };
 
