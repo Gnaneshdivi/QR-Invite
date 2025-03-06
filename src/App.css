@@ -1,38 +1,257 @@
-.App {
+/* Base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+    "Helvetica Neue", sans-serif;
+  background-color: white;
+  color: black;
+}
+
+/* Room Screen Styles */
+.room-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  padding: 20px;
+}
+
+
+
+.room-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 50px;
+}
+
+.logo-container {
+  margin-bottom: 40px;
+}
+
+.cipla-logo {
+  width: 200px;
+  height: auto;
+}
+
+.welcome-message {
+  text-align: center;
+  margin-top: 60px;
+}
+
+.welcome-message h1 {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.qr-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.room-id {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.scan-text {
+  margin-top: 5px;
+  font-size: 14px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.rewardsy-logo{
+  width: 20px;
+}
+
+/* Join Screen Styles */
+.join-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+.join-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: black;
+  width: 100%;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+.nav-logo {
+  height: 40px;
+}
+
+.join-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  flex: 1;
+  padding: 20px;
+  margin-top: 60px;
+}
+
+.join-content h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.employee-input {
+  padding: 10px;
+  font-size: 18px;
+  width: 250px;
+  text-align: center;
+  margin-bottom: 20px;
+  background: white;
+  color: black;
+  border-radius: 8px;
+  border: 2px solid black;
+}
+
+.submit-button {
+  padding: 15px 30px;
+  font-size: 20px;
+  background: #007bff;
   color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.App-link {
-  color: #61dafb;
+.submit-button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.status-success {
+  color: green;
+  font-size: 24px;
+  margin-top: 20px;
+}
+
+.status-failure {
+  color: red;
+  font-size: 24px;
+  margin-top: 20px;
+}
+
+/* Responsive styles for vertical screens (8/4 inch aspect ratio) */
+@media screen and (max-aspect-ratio: 1 / 2) {
+  .room-screen {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .logo-event-container img{
+    width: 80vw;
+  }
+
+  .room-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 0;
+    order: 2;
+  }
+
+  .logo-container {
+    margin-bottom: 30px;
+    margin-top: 20px;
+  }
+
+  .cipla-logo {
+    width: 150px;
+  }
+
+  .welcome-message {
+    margin-top: 20px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .welcome-message h1 {
+    font-size: 36px;
+  }
+
+  .qr-container {
+    position: static;
+    order: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .room-id {
+    margin-top: 10px;
+    font-size: 16px;
+  }
+
+  .scan-text {
+    margin-top: 5px;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .rewardsy-section{
+    display: flex;
+  }
+
+  .rewardsy-section p{
+    margin-right: 1vw;
+  }
+
+}
+
+/* Responsive styles for horizontal screens */
+@media screen and (min-aspect-ratio: 1 / 1) {
+  .room-screen {
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .room-content {
+    flex: 1;
+    margin-top: 0;
+    justify-content: center;
+    margin-right: 200px; /* Make space for QR code */
+  }
+
+  .welcome-message {
+    margin-top: 0;
+  }
+
+  .qr-container {
+    position: absolute;
+    top: 50%;
+    right: 40px;
+    transform: translateY(-50%);
   }
 }
+
