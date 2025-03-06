@@ -22,6 +22,7 @@ body {
   width: 100%;
   position: relative;
   padding: 20px;
+  background: linear-gradient(180deg, #B22222 , #E85C40,#B22222 , #E85C40 );
   /* background-image: url("../public/cipla_background.jpg");
   background-repeat: no-repeat;
   background-position: center;  */
